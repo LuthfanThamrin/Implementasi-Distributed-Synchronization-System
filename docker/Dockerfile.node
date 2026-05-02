@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source code
+COPY src/ ./src/
+COPY run_lock_node.py run_queue_node.py run_cache_node.py ./
+
+# Default entrypoint (overridden per service in docker-compose)
+ENV NODE_ID=node1
+ENV NODE_HOST=0.0.0.0
+ENV NODE_PORT=8000
+ENV LOG_LEVEL=INFO
+
+EXPOSE 8000
+
+# Default entrypoint for development (overridden per service in docker-compose)
+CMD ["python", "run_lock_node.py"]

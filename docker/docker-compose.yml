@@ -1,0 +1,129 @@
+version: "3.9"
+
+x-node-defaults: &node-defaults
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile.node
+  restart: unless-stopped
+  networks:
+    - dsnet
+
+services:
+  # ─────────────────────────────────────────
+  # Lock Manager Nodes (port 8000–8002)
+  # ─────────────────────────────────────────
+  lock-node1:
+    <<: *node-defaults
+    container_name: lock-node1
+    ports:
+      - "8000:8000"
+    environment:
+      NODE_ID: lock-node1
+      NODE_PORT: "8000"
+      LOCK_PEERS: "lock-node2:8001,lock-node3:8002"
+      RAFT_ELECTION_TIMEOUT_MIN: "150"
+      RAFT_ELECTION_TIMEOUT_MAX: "300"
+    command: python run_lock_node.py
+
+  lock-node2:
+    <<: *node-defaults
+    container_name: lock-node2
+    ports:
+      - "8001:8001"
+    environment:
+      NODE_ID: lock-node2
+      NODE_PORT: "8001"
+      LOCK_PEERS: "lock-node1:8000,lock-node3:8002"
+    command: python run_lock_node.py
+
+  lock-node3:
+    <<: *node-defaults
+    container_name: lock-node3
+    ports:
+      - "8002:8002"
+    environment:
+      NODE_ID: lock-node3
+      NODE_PORT: "8002"
+      LOCK_PEERS: "lock-node1:8000,lock-node2:8001"
+    command: python run_lock_node.py
+
+  # ─────────────────────────────────────────
+  # Queue Nodes (port 8100–8102)
+  # ─────────────────────────────────────────
+  queue-node1:
+    <<: *node-defaults
+    container_name: queue-node1
+    ports:
+      - "8100:8100"
+    environment:
+      NODE_ID: queue-node1
+      NODE_PORT: "8100"
+      QUEUE_PEERS: "queue-node2:8101,queue-node3:8102"
+      QUEUE_MAX_SIZE: "10000"
+      ACK_TIMEOUT: "30"
+    command: python run_queue_node.py
+
+  queue-node2:
+    <<: *node-defaults
+    container_name: queue-node2
+    ports:
+      - "8101:8101"
+    environment:
+      NODE_ID: queue-node2
+      NODE_PORT: "8101"
+      QUEUE_PEERS: "queue-node1:8100,queue-node3:8102"
+    command: python run_queue_node.py
+
+  queue-node3:
+    <<: *node-defaults
+    container_name: queue-node3
+    ports:
+      - "8102:8102"
+    environment:
+      NODE_ID: queue-node3
+      NODE_PORT: "8102"
+      QUEUE_PEERS: "queue-node1:8100,queue-node2:8101"
+    command: python run_queue_node.py
+
+  # ─────────────────────────────────────────
+  # Cache Nodes (port 8200–8202)
+  # ─────────────────────────────────────────
+  cache-node1:
+    <<: *node-defaults
+    container_name: cache-node1
+    ports:
+      - "8200:8200"
+    environment:
+      NODE_ID: cache-node1
+      NODE_PORT: "8200"
+      CACHE_PEERS: "cache-node2:8201,cache-node3:8202"
+      CACHE_MAX_SIZE: "1000"
+      CACHE_REPLACEMENT_POLICY: "LRU"
+      CACHE_COHERENCE_PROTOCOL: "MESI"
+    command: python run_cache_node.py
+
+  cache-node2:
+    <<: *node-defaults
+    container_name: cache-node2
+    ports:
+      - "8201:8201"
+    environment:
+      NODE_ID: cache-node2
+      NODE_PORT: "8201"
+      CACHE_PEERS: "cache-node1:8200,cache-node3:8202"
+    command: python run_cache_node.py
+
+  cache-node3:
+    <<: *node-defaults
+    container_name: cache-node3
+    ports:
+      - "8202:8202"
+    environment:
+      NODE_ID: cache-node3
+      NODE_PORT: "8202"
+      CACHE_PEERS: "cache-node1:8200,cache-node2:8201"
+    command: python run_cache_node.py
+
+networks:
+  dsnet:
+    driver: bridge
