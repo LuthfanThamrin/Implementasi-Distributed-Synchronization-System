@@ -1,9 +1,9 @@
 # Distributed Sync System
 
-[Nama Lengkap]
-[NIM] — Informatika 
+[MUHAMMAD LUTHFAN THAMRIN]
+[11231058] 
 Tugas Individu 2 — Parallel and Distributed System
-Link video YouTube: https://youtu.be/[video-id]
+Link video YouTube: [https://youtu.be/5NPUZ9ltcJo]
 
 ---
 
