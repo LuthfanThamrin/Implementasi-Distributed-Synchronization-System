@@ -2,7 +2,7 @@
 
 [MUHAMMAD LUTHFAN THAMRIN]
 [11231058] 
-Tugas Individu 2 — Parallel and Distributed System
+Tugas  3 — Parallel and Distributed System
 Link video YouTube: [https://youtu.be/5NPUZ9ltcJo]
 
 ---
