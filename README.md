@@ -1,7 +1,7 @@
 # Distributed Sync System
 
 [Nama Lengkap]
-[NIM] — Informatika [Kampus]
+[NIM] — Informatika 
 Tugas Individu 2 — Parallel and Distributed System
 Link video YouTube: https://youtu.be/[video-id]
 
@@ -36,15 +36,6 @@ Ketiganya dikoordinasikan melalui leader election, log replication, dan heartbea
 │ :8000–8002  │ │ :8100–8102  │ │  :8200–8202     │
 │ Raft + Lock │ │ Raft + MQ   │ │  Raft + MESI    │
 └─────────────┘ └─────────────┘ └─────────────────┘
-```
-
-Semua node menggunakan **RaftNode** sebagai core modul untuk:
-- Leader election dan log replication
-- Heartbeat broadcast antar node
-- AppendEntries dan RequestVote RPC
-- Commit log dan apply ke state machine
-
----
 
 ## Build & Run
 
@@ -52,17 +43,7 @@ Semua node menggunakan **RaftNode** sebagai core modul untuk:
 docker compose -f docker/docker-compose.yml up --build
 ```
 
-Cek logs secara live:
-```bash
-docker compose -f docker/docker-compose.yml logs -f
-```
 
-Reset cluster:
-```bash
-docker compose -f docker/docker-compose.yml down -v
-```
-
----
 
 ## Step-by-Step Demo
 
@@ -245,23 +226,3 @@ python benchmarks/load_test_scenarios.py \
   --cache-port 8202
 ```
 
----
-
-## Algoritma
-
-| Komponen | Algoritma |
-|---|---|
-| Consensus & Leader Election | Raft (Ongaro & Ousterhout, 2014) |
-| Deadlock Detection | Wait-For Graph + DFS cycle detection |
-| Cache Coherence | MESI Protocol (write-invalidate) |
-| Cache Eviction | LRU / LFU |
-| Failure Detection | Phi Accrual Failure Detector |
-
----
-
-## Tech Stack
-
-- Python 3.11 + asyncio
-- aiohttp
-- Docker + Docker Compose
-- pytest + pytest-asyncio
